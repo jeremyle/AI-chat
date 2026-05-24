@@ -30,7 +30,7 @@ fun TopBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.Blue)
+            .background(Color.Transparent)
             .statusBarsPadding()
             .padding(horizontal = Spacing.lg, vertical = Spacing.md),
         verticalAlignment = Alignment.CenterVertically
