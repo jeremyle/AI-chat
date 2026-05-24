@@ -3,4 +3,5 @@
     <string name="home_title">AI Chat</string>
     <string name="home_subtitle">Ask me anything</string>
     <string name="home_start_button">Start a conversation</string>
+    <string name="menu">Menu</string>
 </resources>
