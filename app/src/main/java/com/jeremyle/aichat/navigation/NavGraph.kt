@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.jeremyle.aichat.ui.screens.chat.ChatScreen
 import com.jeremyle.aichat.ui.screens.home.HomeScreen
 
 @Composable
@@ -15,7 +16,12 @@ fun NavGraph() {
         startDestination = Screen.Home.route
     ) {
         composable(Screen.Home.route) {
-            HomeScreen()
+            HomeScreen(
+                onNavigateToChat = { navController.navigate(Screen.Chat.route) }
+            )
+        }
+        composable(Screen.Chat.route) {
+            ChatScreen()
         }
     }
 }
