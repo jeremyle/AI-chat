@@ -33,25 +33,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.jeremyle.aichat.R
-import com.jeremyle.aichat.data.model.mockMessages
 import com.jeremyle.aichat.ui.components.TopBar
 import com.jeremyle.aichat.ui.theme.BackgroundGradient
 import com.jeremyle.aichat.ui.theme.BottomGradient
-import com.jeremyle.aichat.ui.theme.GradientBottom
 import com.jeremyle.aichat.ui.theme.Spacing
 import com.jeremyle.aichat.utils.isKeyboardVisible
 
 @Composable
-fun ChatScreen() {
+fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
     var text by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
-    var messages by remember { mutableStateOf(mockMessages.reversed()) }
+    val messages = viewModel.messages
+    val isLoading = viewModel.isLoading
+
+    val onSend = {
+        if (text.isNotBlank()) {
+            viewModel.sendMessage(text)
+            text = ""
+        }
+    }
 
     LifecycleResumeEffect(Unit) {
         focusRequester.requestFocus()
@@ -141,10 +147,8 @@ fun ChatScreen() {
 
                         Spacer(modifier = Modifier.width(Spacing.lg))
 
-
-
                         IconButton(
-                            onClick = {},
+                            onClick = onSend,
                             modifier = Modifier.background(
                                 color = MaterialTheme.colorScheme.primary,
                                 shape = CircleShape
