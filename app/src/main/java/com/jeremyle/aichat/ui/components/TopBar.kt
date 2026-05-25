@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import com.jeremyle.aichat.R
 import com.jeremyle.aichat.ui.theme.Spacing
+import com.jeremyle.aichat.ui.theme.TopGradient
 
 @Composable
 fun TopBar(
@@ -30,7 +31,7 @@ fun TopBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.Transparent)
+            .background(TopGradient)
             .statusBarsPadding()
             .padding(horizontal = Spacing.lg, vertical = Spacing.md),
         verticalAlignment = Alignment.CenterVertically

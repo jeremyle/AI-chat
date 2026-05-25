@@ -1,5 +1,6 @@
 package com.jeremyle.aichat.ui.screens.chat
 
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -40,22 +41,17 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.jeremyle.aichat.R
 import com.jeremyle.aichat.data.model.mockMessages
 import com.jeremyle.aichat.ui.components.TopBar
+import com.jeremyle.aichat.ui.theme.BackgroundGradient
+import com.jeremyle.aichat.ui.theme.BottomGradient
 import com.jeremyle.aichat.ui.theme.GradientBottom
-import com.jeremyle.aichat.ui.theme.GradientTop
 import com.jeremyle.aichat.ui.theme.Spacing
+import com.jeremyle.aichat.utils.isKeyboardVisible
 
 @Composable
 fun ChatScreen() {
     var text by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
     var messages by remember { mutableStateOf(mockMessages.reversed()) }
-
-    val gradientBackground = Brush.verticalGradient(
-        colors = listOf(
-            GradientTop,
-            GradientBottom, // light blue at the bottom
-        )
-    )
 
     LifecycleResumeEffect(Unit) {
         focusRequester.requestFocus()
@@ -72,7 +68,7 @@ fun ChatScreen() {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(gradientBackground)
+                .background(BackgroundGradient)
         ) {
 
             // scrollable messages list
@@ -98,25 +94,21 @@ fun ChatScreen() {
                         .fillMaxWidth()
                         .height(120.dp)
                         .align(Alignment.BottomCenter)
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(
-                                    Color.Transparent,
-                                    GradientBottom.copy(alpha = 0.3f),
-                                    GradientBottom.copy(alpha = 0.7f),
-                                    GradientBottom.copy(alpha = 0.9f),
-                                )
-                            )
-                        )
+                        .background(BottomGradient)
                 )
 
+                val bottomPadding by animateDpAsState(
+                    targetValue = if (isKeyboardVisible()) Spacing.md else Spacing.xl,
+                    label = "bottomPadding"
+                )
                 // chat input stuck to the bottom of the screen
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.BottomCenter)
                         .background(Color.Transparent)
-                        .padding(horizontal = Spacing.lg, vertical = Spacing.md)
+                        .padding(horizontal = Spacing.lg)
+                        .padding(bottom = bottomPadding)
                 ) {
                     Row(
                         modifier = Modifier

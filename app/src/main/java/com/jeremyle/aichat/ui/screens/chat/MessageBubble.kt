@@ -51,7 +51,6 @@ private fun UserMessageBubble(message: Message) {
             Text(
                 text = message.content,
                 style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.background(Color.Red)
             )
         }
     }
