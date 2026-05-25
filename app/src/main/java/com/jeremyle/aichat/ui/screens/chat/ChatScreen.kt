@@ -6,9 +6,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -32,8 +35,10 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.jeremyle.aichat.R
+import com.jeremyle.aichat.data.model.mockMessages
 import com.jeremyle.aichat.ui.components.TopBar
 import com.jeremyle.aichat.ui.theme.GradientBottom
 import com.jeremyle.aichat.ui.theme.GradientTop
@@ -43,6 +48,7 @@ import com.jeremyle.aichat.ui.theme.Spacing
 fun ChatScreen() {
     var text by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
+    var messages by remember { mutableStateOf(mockMessages.reversed()) }
 
     val gradientBackground = Brush.verticalGradient(
         colors = listOf(
@@ -69,56 +75,91 @@ fun ChatScreen() {
                 .background(gradientBackground)
         ) {
 
-            // chat input stuck to the bottom of the screen
+            // scrollable messages list
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                reverseLayout = true, // newest message at the bottom
+            ) {
+                items(messages) { message ->
+                    MessageBubble(message)
+                }
+            }
+
+            // gradient + input as one unit that moves up with keyboard
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.BottomCenter)
-                    .background(Color.Transparent)
                     .imePadding()
-                    .padding(horizontal = Spacing.lg, vertical = Spacing.md)
             ) {
-                Row(
+                // gradient blur — drawn first so it's underneath
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(50))
-                        .background(Color.White)
-                        .padding(Spacing.lg)
-                ) {
-                    BasicTextField(
-                        value = text,
-                        onValueChange = { text = it },
-                        modifier = Modifier
-                            .weight(1f)
-                            .align(Alignment.CenterVertically)
-                            .focusRequester(focusRequester),
-                        textStyle = MaterialTheme.typography.titleLarge.copy(
-                            color = MaterialTheme.colorScheme.onSurface
-                        ),
-                        decorationBox = { innerTextField ->
-                            if (text.isEmpty()) {
-                                Text(
-                                    text = stringResource(R.string.message_hint),
-                                    style = MaterialTheme.typography.titleLarge,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                        .height(120.dp)
+                        .align(Alignment.BottomCenter)
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(
+                                    Color.Transparent,
+                                    GradientBottom.copy(alpha = 0.3f),
+                                    GradientBottom.copy(alpha = 0.7f),
+                                    GradientBottom.copy(alpha = 0.9f),
                                 )
-                            }
-                            innerTextField()
-                        }
-                    )
-
-                    Spacer(modifier = Modifier.width(Spacing.lg))
-
-
-
-                    IconButton(
-                        onClick = {},
-                        modifier = Modifier.background(
-                            color = MaterialTheme.colorScheme.primary,
-                            shape = CircleShape
+                            )
                         )
+                )
+
+                // chat input stuck to the bottom of the screen
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.BottomCenter)
+                        .background(Color.Transparent)
+                        .padding(horizontal = Spacing.lg, vertical = Spacing.md)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(50))
+                            .background(Color.White)
+                            .padding(Spacing.lg)
                     ) {
-                        Icon(Icons.AutoMirrored.Filled.Send, contentDescription = "Send")
+                        BasicTextField(
+                            value = text,
+                            onValueChange = { text = it },
+                            modifier = Modifier
+                                .weight(1f)
+                                .align(Alignment.CenterVertically)
+                                .focusRequester(focusRequester),
+                            textStyle = MaterialTheme.typography.titleLarge.copy(
+                                color = MaterialTheme.colorScheme.onSurface
+                            ),
+                            decorationBox = { innerTextField ->
+                                if (text.isEmpty()) {
+                                    Text(
+                                        text = stringResource(R.string.message_hint),
+                                        style = MaterialTheme.typography.titleLarge,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                                innerTextField()
+                            }
+                        )
+
+                        Spacer(modifier = Modifier.width(Spacing.lg))
+
+
+
+                        IconButton(
+                            onClick = {},
+                            modifier = Modifier.background(
+                                color = MaterialTheme.colorScheme.primary,
+                                shape = CircleShape
+                            )
+                        ) {
+                            Icon(Icons.AutoMirrored.Filled.Send, contentDescription = "Send")
+                        }
                     }
                 }
             }
