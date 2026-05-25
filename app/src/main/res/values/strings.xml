@@ -6,4 +6,5 @@
     <string name="menu">Menu</string>
     <string name="message_hint">Type a message </string>
     <string name="error_message">Something went wrong: %s</string>
+    <string name="thinking_message">Thinking...</string>
 </resources>

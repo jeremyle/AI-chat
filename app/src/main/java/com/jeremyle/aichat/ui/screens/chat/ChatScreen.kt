@@ -5,9 +5,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -24,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,6 +37,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
@@ -51,6 +56,15 @@ fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
     val focusRequester = remember { FocusRequester() }
     val messages = viewModel.messages
     val isLoading = viewModel.isLoading
+    var inputBarHeight by remember { mutableStateOf(0.dp) }
+    val density = LocalDensity.current
+    val imeInsets = WindowInsets.ime
+    val totalBottomPadding by remember {
+        derivedStateOf {
+            inputBarHeight + with(density) { imeInsets.getBottom(density).toDp() }
+        }
+    }
+    var topBarHeight by remember { mutableStateOf(0.dp) }
 
     val onSend = {
         if (text.isNotBlank()) {
@@ -68,7 +82,11 @@ fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
         topBar = {
             TopBar(
                 title = stringResource(R.string.app_name),
-                onMenuClick = {})
+                onMenuClick = {},
+                modifier = Modifier.onSizeChanged { size ->
+                    topBarHeight = with(density) { size.height.toDp() }
+                }
+            )
         }
     ) { _ ->
         Box(
@@ -79,11 +97,35 @@ fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
 
             // scrollable messages list
             LazyColumn(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = totalBottomPadding),
                 reverseLayout = true, // newest message at the bottom
             ) {
+
+                // loading indicator — appears at bottom because reverseLayout = true
+                if (isLoading) {
+                    item {
+                        Text(
+                            text = stringResource(R.string.thinking_message),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(Spacing.lg)
+                        )
+                    }
+                }
+
                 items(messages) { message ->
                     MessageBubble(message)
+                }
+
+                // Spacer for the first item to be below the top bar
+                item {
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(topBarHeight)
+                    )
                 }
             }
 
@@ -93,6 +135,9 @@ fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
                     .fillMaxWidth()
                     .align(Alignment.BottomCenter)
                     .imePadding()
+                    .onSizeChanged { size ->
+                        inputBarHeight = with(density) { size.height.toDp() }
+                    }
             ) {
                 // gradient blur — drawn first so it's underneath
                 Box(
@@ -154,7 +199,11 @@ fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
                                 shape = CircleShape
                             )
                         ) {
-                            Icon(Icons.AutoMirrored.Filled.Send, contentDescription = "Send")
+                            Icon(
+                                Icons.AutoMirrored.Filled.Send,
+                                contentDescription = "Send",
+                                tint = Color.White
+                            )
                         }
                     }
                 }

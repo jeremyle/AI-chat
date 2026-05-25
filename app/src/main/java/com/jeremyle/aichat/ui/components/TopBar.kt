@@ -26,10 +26,11 @@ import com.jeremyle.aichat.ui.theme.TopGradient
 @Composable
 fun TopBar(
     title: String,
-    onMenuClick: () -> Unit
+    onMenuClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .background(TopGradient)
             .statusBarsPadding()
