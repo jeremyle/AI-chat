@@ -11,6 +11,7 @@ import com.google.firebase.ai.ai
 import com.google.firebase.ai.type.FirebaseAIException
 import com.google.firebase.ai.type.GenerativeBackend
 import com.jeremyle.aichat.R
+import com.jeremyle.aichat.data.ai.AIModelProvider
 import com.jeremyle.aichat.data.model.Message
 import com.jeremyle.aichat.data.model.MessageRole
 import kotlinx.coroutines.delay
@@ -24,8 +25,11 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
     var isLoading by mutableStateOf(false)
         private set
 
+    var thinkingText by mutableStateOf<String?>(null)
+        private set
+
     private val model =
-        Firebase.ai(backend = GenerativeBackend.googleAI()).generativeModel("gemini-2.5-flash")
+        Firebase.ai(backend = GenerativeBackend.googleAI()).generativeModel("gemini-3.1-flash-lite")
 
     fun sendMessage(content: String) {
         if (content.isBlank()) return
@@ -62,18 +66,29 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
                     isLoading = false
                 }
             } else {
+                val assistantMessage = Message(content = "", role = MessageRole.ASSISTANT)
+                messages = listOf(assistantMessage) + messages
+
                 try {
-                    val response = model.generateContent(content)
-                    response.text?.let { reply ->
-                        messages = listOf(
-                            Message(content = reply, role = MessageRole.ASSISTANT)
-                        ) + messages
+                    val stream = AIModelProvider.chatModel.generateContentStream(content)
+
+                    stream.collect { chunk ->
+                        // capture thinking separately
+                        chunk.thoughtSummary?.let { thought ->
+                            thinkingText = thought
+                        }
+                        chunk.text?.let { token ->
+                            val updated = messages.first().copy(
+                                content = messages.first().content + token
+                            )
+                            messages = listOf(updated) + messages.drop(1)
+                        }
                     }
                 } catch (e: FirebaseAIException) {
                     val error = messages.first().copy(
                         content = getString(R.string.error_message, e.message.orEmpty())
                     )
-                    messages = listOf(error) + messages
+                    messages = listOf(error) + messages.drop(1)
                 } finally {
                     isLoading = false
                 }

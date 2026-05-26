@@ -32,7 +32,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -48,6 +47,7 @@ fun InputBar(
     onSendClick: (String) -> Unit,
     onSizeChanged: (IntSize) -> Unit,
     isLoading: Boolean,
+    thinkingText: String?,
     modifier: Modifier = Modifier
 ) {
     val focusRequester = remember { FocusRequester() }
@@ -88,12 +88,7 @@ fun InputBar(
         ) {
             // loading indicator — appears at bottom because reverseLayout = true
             if (isLoading) {
-                Text(
-                    text = stringResource(R.string.thinking_message),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(Spacing.lg)
-                )
+                ThinkingIndicator(thinkingText)
             }
 
             Row(

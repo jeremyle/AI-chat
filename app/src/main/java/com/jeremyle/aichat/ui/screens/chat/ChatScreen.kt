@@ -104,6 +104,7 @@ fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
                     inputBarHeight = with(density) { size.height.toDp() }
                 },
                 isLoading = isLoading,
+                thinkingText = viewModel.thinkingText,
                 modifier = Modifier.align(Alignment.BottomCenter)
             )
         }
