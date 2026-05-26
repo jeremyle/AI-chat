@@ -83,18 +83,6 @@ fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
                 reverseLayout = true, // newest message at the bottom
             ) {
 
-                // loading indicator — appears at bottom because reverseLayout = true
-                if (isLoading) {
-                    item {
-                        Text(
-                            text = stringResource(R.string.thinking_message),
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(Spacing.lg)
-                        )
-                    }
-                }
-
                 items(messages) { message ->
                     MessageBubble(message)
                 }

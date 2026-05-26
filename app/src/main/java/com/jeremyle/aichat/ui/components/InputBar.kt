@@ -3,6 +3,7 @@ package com.jeremyle.aichat.ui.components
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -77,7 +78,7 @@ fun InputBar(
             label = "bottomPadding"
         )
         // chat input stuck to the bottom of the screen
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
@@ -85,6 +86,16 @@ fun InputBar(
                 .padding(horizontal = Spacing.lg)
                 .padding(bottom = bottomPadding)
         ) {
+            // loading indicator — appears at bottom because reverseLayout = true
+            if (isLoading) {
+                Text(
+                    text = stringResource(R.string.thinking_message),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(Spacing.lg)
+                )
+            }
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
