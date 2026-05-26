@@ -10,18 +10,17 @@ import com.google.firebase.ai.type.thinkingConfig
 
 object AIModelProvider {
 
-    private const val MODEL_NAME = "gemini-3.1-flash-lite"
+    private const val MODEL_NAME = "gemini-3.5-flash"
 
     val chatModel by lazy {
         Firebase.ai(backend = GenerativeBackend.googleAI())
             .generativeModel(
                 modelName = MODEL_NAME,
                 generationConfig = generationConfig {
-                    thinkingConfig {
+                    thinkingConfig = thinkingConfig {
                         includeThoughts = true
                         thinkingLevel = ThinkingLevel.HIGH
                     }
-                    temperature = 0.7f
                 },
                 systemInstruction = content {
                     text("You are a helpful AI assistant. Answer question clearly and concisely.")
