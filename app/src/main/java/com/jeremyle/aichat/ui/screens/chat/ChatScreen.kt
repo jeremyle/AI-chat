@@ -12,9 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -34,7 +32,6 @@ import com.jeremyle.aichat.data.model.Message
 import com.jeremyle.aichat.ui.components.InputBar
 import com.jeremyle.aichat.ui.components.TopBar
 import com.jeremyle.aichat.ui.theme.BackgroundGradient
-import com.jeremyle.aichat.ui.theme.Spacing
 
 @Composable
 fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
@@ -80,13 +77,7 @@ fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(bottom = totalBottomPadding),
-                reverseLayout = true, // newest message at the bottom
             ) {
-
-                items(messages) { message ->
-                    MessageBubble(message)
-                }
-
                 // Spacer for the first item to be below the top bar
                 item {
                     Spacer(
@@ -94,6 +85,10 @@ fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
                             .fillMaxWidth()
                             .height(topBarHeight)
                     )
+                }
+
+                items(messages) { message ->
+                    MessageBubble(message)
                 }
             }
 

@@ -36,7 +36,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             isLoading = true
             val assistantMessage = Message(content = "", role = MessageRole.ASSISTANT)
-            messages = listOf(assistantMessage) + messages
+            messages = messages + listOf(assistantMessage)
 
             try {
                 if (shouldUseStreaming()) {
@@ -45,10 +45,10 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
                     generateContentAndUpdate(content)
                 }
             } catch (e: FirebaseAIException) {
-                val error = messages.first().copy(
+                val error = messages.last().copy(
                     content = getString(R.string.error_message, e.message.orEmpty())
                 )
-                messages = listOf(error) + messages.drop(1)
+                messages = messages.dropLast(1) + listOf(error)
             } finally {
                 isLoading = false
             }
@@ -77,10 +77,10 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
                 println("Thinking: $thought")
             }
             chunk.text?.let { token ->
-                val updated = messages.first().copy(
-                    content = messages.first().content + token
+                val updated = messages.last().copy(
+                    content = messages.last().content + token
                 )
-                messages = listOf(updated) + messages.drop(1)
+                messages = messages.dropLast(1) + listOf(updated)
             }
         }
     }
@@ -95,10 +95,10 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
         }
 
         response.text?.let { token ->
-            val updated = messages.first().copy(
-                content = messages.first().content + token
+            val updated = messages.last().copy(
+                content = messages.last().content + token
             )
-            messages = listOf(updated) + messages.drop(1)
+            messages = messages.dropLast(1) + listOf(updated)
         }
     }
 }
