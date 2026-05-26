@@ -12,11 +12,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import com.jeremyle.aichat.data.model.Message
 import com.jeremyle.aichat.data.model.MessageRole
 import com.jeremyle.aichat.ui.theme.Spacing
 import com.mikepenz.markdown.m3.Markdown
+import com.mikepenz.markdown.m3.markdownTypography
 
 @Composable
 fun MessageBubble(message: Message) {
@@ -64,6 +66,17 @@ private fun AssistantMessageBubble(message: Message) {
             .background(Color.Transparent)
             .padding(horizontal = Spacing.lg, vertical = Spacing.md)
     ) {
-        Markdown(message.content)
+        Markdown(
+            content = message.content,
+            typography = markdownTypography(
+                h1 = MaterialTheme.typography.headlineLarge,
+                h2 = MaterialTheme.typography.headlineMedium,
+                h3 = MaterialTheme.typography.headlineSmall,
+                text = MaterialTheme.typography.bodyLarge,
+                code = MaterialTheme.typography.bodyMedium.copy(
+                    fontFamily = FontFamily.Monospace
+                )
+            )
+        )
     }
 }

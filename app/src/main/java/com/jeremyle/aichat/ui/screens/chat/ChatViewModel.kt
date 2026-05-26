@@ -89,8 +89,8 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
         val response = AIModelProvider.chatModel.generateContent(content)
 
         response.thoughtSummary?.let { thought ->
-            thinkingText = thought.take(80)
             println("Thinking: $thought")
+            thinkingText = thought.take(80)
             delay(1000L)
         }
 

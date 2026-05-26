@@ -17,7 +17,7 @@ import com.jeremyle.aichat.ui.theme.Spacing
 
 @Composable
 fun ThinkingIndicator(thought: String?) {
-    val displayText = thought?.take(60)?.plus("...") ?: "Thinking ..."
+    val displayText = thought?.plus("...") ?: "Thinking ..."
 
     Row(
         modifier = Modifier
@@ -29,13 +29,14 @@ fun ThinkingIndicator(thought: String?) {
             strokeWidth = 2.dp,
             color = MaterialTheme.colorScheme.primary
         )
+
         Spacer(modifier = Modifier.width(Spacing.sm))
+
         Text(
             text = displayText,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
+            style = MaterialTheme.typography.bodyLarge
         )
     }
 }
